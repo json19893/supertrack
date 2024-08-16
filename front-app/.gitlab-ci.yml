@@ -1,0 +1,20 @@
+variables:
+  GIT_STRATEGY: clone
+  PATH: "C:\\Program Files\\Git\\cmd;C:\\Program Files\\Docker\\Docker\\resources\\bin;%PATH%"
+
+before_script:
+  - git --version
+  - git config --global url."http://localhost/".insteadOf "http://0a0597bd6b16/"
+  - git remote set-url origin http://localhost/root/front-app.git
+  - docker --version
+
+deploy:
+  stage: deploy
+  tags:
+    - main
+  script:
+    - docker stop auth-crud-app-container || true
+    - docker rm auth-crud-app-container || true
+    - docker build -t auth-crud-app .
+    - docker run -d -p 3000:80 --name auth-crud-app-container auth-crud-app
+
